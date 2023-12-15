@@ -93,156 +93,135 @@ const rootReducer = (state = initialState, action) => {
                                     case 'FILTRAR_DATOS':
   const { filtros } = action;
 
-  console.log('Filtros:', filtros);
-  console.log('Palabras:', filtros.palabra);
-  console.log('Sin palabras:', filtros.sinpalabra);
-  console.log('Datos gráficos:', state.datosGraficos);
-
-
-  let datosFiltradosNuevo = state.datosGraficos.flat();
+  let datosFiltradosNuevo = []
   // console.log("DATOS",filtros.datos)
-  if(filtros.datos && filtros.datos.length !== state.datosGraficos.length){
+  if(filtros.datos.length !== state.datosGraficos.length){
    
-     datosFiltradosNuevo = state.datosGraficos.flat();
+     datosFiltradosNuevo = filtros.datos
 
   } else {
-    datosFiltradosNuevo = state.datosGraficos.flat();
+    datosFiltradosNuevo = state.datosGraficos;
   }
 
-  if(!filtros.palabra || !filtros.sinpalabra || (filtros.palabra.lenght ===0 && filtros.sinpalabra.lenght === 0)){
-     console.log("ESTOY EN ARRAY VACIO")
+  if(filtros.palabra.length === 0 && filtros.sinpalabra.length === 0){
+    // console.log("ESTOY EN ARRAY VACIO")
     datosFiltradosNuevo = state.datosParaFiltros;
   }
   
 
-  if ((filtros.palabra && filtros.palabra.lenght > 0) || (filtros.sinpalabras && filtros.sinpalabra.lenght > 0 )) {
+  if (filtros.palabra.length > 0 || filtros.sinpalabra.length > 0) {
     // console.log("FILTRO",filtros.palabra)
     // console.log("sinpalabra",filtros.sinpalabra)
-    // console.log("datos",datosFiltradosNuevo)
+    // console.log("datos",filtros.datos)
     let twitsFiltrados = [] 
-    let twitsFiltrados2 = [] 
-    let twitsExcluidos = []
+    let twitsFiltrados2 =[]
+    let twitsExcluidos = datosFiltradosNuevo
     let contador = 0
 
-    if(twitsFiltrados.length > 0 || twitsExcluidos.length > 0){
-       twitsFiltrados2 = []
-    } else {
-      twitsFiltrados2 = state.datosGraficos.flat()
-    }
+    
   
   
   
     for (let j = 0; j < filtros.palabra.length; j++) {
-      if (filtros.palabra.length === 1) {
-        twitsFiltrados = datosFiltradosNuevo;
+      // console.log(datosFiltradosNuevo)
+      if(filtros.palabra.length === 1){
+        // console.log("ESTOY ACA")
+        twitsFiltrados = datosFiltradosNuevo
+        twitsFiltrados2.push(twitsFiltrados);
+       }
+    contador = contador + filtros.palabra.length 
+    let palabras = filtros.palabra[j].split(",").map(palabra => palabra.toLowerCase().trim());
+    //  console.log("PALABRAS[0]",palabras)
+     for (let i = 0; i < palabras.length; i++) {
+      if (palabras[i].includes("-")) {
+       contador = contador + 1
+      }
+     }
      
-      }
-      if(j > 2){
-        datosFiltradosNuevo = twitsFiltrados2
-      }
-     
-    
-      contador = contador + filtros.palabra.length;
-      let palabras = filtros.palabra[j].split(",").map(palabra => palabra.toLowerCase().trim());
-    
-      for (let i = 0; i < palabras.length; i++) {
-        if (palabras[i].includes("-")) {
-          contador = contador + 1;
-        }
-      }
-        
-      twitsFiltrados = datosFiltradosNuevo.filter(twit => {
-        let textoTwit = twit.texto.toLowerCase();
-    
-        return palabras.some(palabra => {
-          if (palabra.includes("-")) {
-            let bloques = palabra.split("-");
-            for (let i = 0; i < bloques.length; i++) {
-              if (bloques[i].startsWith('@')) {
-                const nombreUsuario = bloques[i].substring(1);
-                let datosNuevosUsuarioOriginal = twit.usuarioOriginal.toLowerCase() === nombreUsuario || (filtros.anidados && twit.usuarioCategorizador.includes(nombreUsuario));
-                return datosNuevosUsuarioOriginal;
-              }
-            }
-            return bloques.every(bloque => textoTwit.includes(bloque.trim()));
-          } else if (palabra.startsWith('@')) {
+     twitsFiltrados = datosFiltradosNuevo.filter(twit => {
+      let textoTwit = twit.texto.toLowerCase();
+      return palabras.some(palabra => {
+        if (palabra.includes("-")) {
+          let bloques = palabra.split("-")        
+          for (let i = 0; i < bloques.length; i++) {
+            if (bloques[i].startsWith('@')) {
+              const nombreUsuario = bloques[i].substring(1);
+              let datosNuevosUsuarioOriginal = twit.usuarioOriginal.toLowerCase() === nombreUsuario || (filtros.anidados && twit.usuarioCategorizador.includes(nombreUsuario))
+              datosFiltradosNuevo = datosNuevosUsuarioOriginal
+              return twit.usuarioOriginal.toLowerCase() === nombreUsuario || (filtros.anidados && twit.usuarioCategorizador.includes(nombreUsuario));
+            } 
+          }
+          return bloques.every(bloque => textoTwit.includes(bloque.trim()));
+        } 
+        else if (palabra.startsWith('@')){
             const nombreUsuario = palabra.substring(1);
             const categorizador = twit.usuarioCategorizador.map(palabra => palabra.toLowerCase().trim());
             return twit.usuarioOriginal.toLowerCase() === nombreUsuario || (filtros.anidados && categorizador.includes(nombreUsuario));
-          } else {
-            return textoTwit.includes(palabra);
-          }
-        });
+          } 
+      else {
+        return textoTwit.includes(palabra)
+        }
       });
-      // console.log("twitsFiltrados",twitsFiltrados)
-      twitsFiltrados2.push(...twitsFiltrados); // Utilizamos el spread operator para agregar todos los elementos del array al array twitsFiltrados2
+    });
+    // console.log("twitsfiltrados",twitsFiltrados)
+    twitsFiltrados2.push(twitsFiltrados);
     }
   
   
     for (let j = 0; j < filtros.sinpalabra.length; j++) {
-      // if (filtros.sinpalabra.length === 1) {
-      //   twitsExcluidos = datosFiltradosNuevo;
-      //   twitsFiltrados2.push(twitsExcluidos);
-      // }
-
-      if(twitsFiltrados.length > 0){
-        if(twitsExcluidos.length > 0){
-          twitsFiltrados2 = twitsFiltrados.concat(twitsExcluidos)
-        } else {
-          twitsFiltrados2 = twitsFiltrados
-        }
-     } else {
-       twitsFiltrados2 = twitsFiltrados
-     }
-
-      datosFiltradosNuevo = twitsFiltrados2
-    
-      contador = contador + filtros.sinpalabra.length;
+      if(filtros.sinpalabra.length === 1){
+        // console.log("ESTOY ACA")
+        twitsExcluidos = datosFiltradosNuevo
+        twitsFiltrados2.push(twitsExcluidos);
+       }
+       contador = contador + filtros.sinpalabra.length 
       let palabras = filtros.sinpalabra[j].split(",").map(palabra => palabra.toLowerCase().trim());
-    
-      for (let i = 0; i < palabras.length; i++) {
-        if (palabras[i].includes("-")) {
-          contador = contador + 1;
-        }
+      //  console.log("PALABRAS[0]",palabras[0].length)
+       for (let i = 0; i < palabras.length; i++) {
+       if (palabras[i].includes("-")) {
+        contador = contador + 1
+       }
       }
-    
-      twitsExcluidos = datosFiltradosNuevo.filter(twit => {
+
+       twitsExcluidos = datosFiltradosNuevo.filter(twit => {
         let textoTwit = twit.texto.toLowerCase();
         return !palabras.some(palabra => {
           if (palabra.includes("-")) {
-            let bloques = palabra.split("-");
+            let bloques = palabra.split("-");           
             for (let i = 0; i < bloques.length; i++) {
               if (bloques[i].startsWith('@')) {
                 const nombreUsuario = bloques[i].substring(1);
-                let datosNuevosUsuarioOriginal = twit.usuarioOriginal.toLowerCase() === nombreUsuario || (filtros.anidados && twit.usuarioCategorizador.includes(nombreUsuario));
-                return datosNuevosUsuarioOriginal;
-              }
+                let datosNuevosUsuarioOriginal = twit.usuarioOriginal.toLowerCase() === nombreUsuario || (filtros.anidados && twit.usuarioCategorizador.includes(nombreUsuario))
+                datosFiltradosNuevo = datosNuevosUsuarioOriginal
+                return twit.usuarioOriginal.toLowerCase() === nombreUsuario || (filtros.anidados && twit.usuarioCategorizador.includes(nombreUsuario));
+              } 
             }
-            return bloques.every(bloque => !textoTwit.includes(bloque.trim()));
-          } else if (palabra.startsWith('@')) {
-            const nombreUsuario = palabra.substring(1);
-            const categorizador = twit.usuarioCategorizador.map(palabra => palabra.toLowerCase().trim());
-            return twit.usuarioOriginal.toLowerCase() === nombreUsuario || (filtros.anidados && categorizador.includes(nombreUsuario));
-          } else {
-            return textoTwit.includes(palabra);
+            return bloques.every(bloque => textoTwit.includes(bloque.trim()));
+          } 
+          else if (palabra.startsWith('@')){
+              const nombreUsuario = palabra.substring(1);
+              const categorizador = twit.usuarioCategorizador.map(palabra => palabra.toLowerCase().trim());
+              return twit.usuarioOriginal.toLowerCase() === nombreUsuario || (filtros.anidados && categorizador.includes(nombreUsuario));
+            } 
+        else {
+          return textoTwit.includes(palabra)
           }
         });
       });
-      // console.log("exluidos",twitsExcluidos)
-      twitsFiltrados2.push(...twitsExcluidos);
-    }
+      // console.log("twitsExcluidos",twitsExcluidos)
+      twitsFiltrados2.push(twitsExcluidos);
+      }
   
     // console.log(twitsFiltrados2); 
     let combinado = [].concat(...twitsFiltrados2);
-    // console.log((twitsExcluidos,twitsFiltrados).flat())
-    // let combinado = twitsFiltrados2.flat()
+    // console.log(combinado)
   
   
     let objetosRepetidos = combinado.filter((objeto, index) => {
       return combinado.some((obj, i) => i !== index && obj.id === objeto.id);
     });
     
-    //  console.log(objetosRepetidos)
+    // console.log(contador)
      let objetosUnicos = objetosRepetidos.reduce((unique, objeto) => {
       if (!unique.some((uniqueObjeto) => uniqueObjeto.id === objeto.id)) {
         unique.push(objeto);
@@ -313,13 +292,12 @@ const rootReducer = (state = initialState, action) => {
   }
 
   if (Array.isArray(filtros.modelo) && filtros.modelo.length === 1 && filtros.modelo[0] === "") {
-    filtros.modelo = []; // Establecer `modelo` como un array vacío si está vacío o no presente
+    filtros.modelo = []; // Establecer `modelo` como un array vacío
   }
   
   // Aplicar el filtro por modelo si está presente
   if (Array.isArray(filtros.modelo) && filtros.modelo.length > 0) {
-    // Filtrar por modelo para obtener tweets con al menos una propiedad con contenido
-    datosFiltradosNuevo = state.datosGraficos.flat();
+    // Filtrar por modelo
     const tweetsFiltradosModelo = datosFiltradosNuevo.filter((dato) => {
       return filtros.modelo.some((modelo) => dato[modelo]?.length > 0);
     });
@@ -327,45 +305,32 @@ const rootReducer = (state = initialState, action) => {
     const tweetsFiltradosModeloAnterior = datosFiltradosAnterior.filter((dato) => {
       return filtros.modelo.some((modelo) => dato[modelo]?.length > 0);
     });
-
-          
-// Verificar si se deben aplicar filtros adicionales por categorías
-if (filtros.categoria && filtros.categoria.length > 0) {
-  // Filtrar por categorías
-  datosFiltradosNuevo = tweetsFiltradosModelo.filter((dato) => {
-    // Verificar si alguna categoría coincide con los tweets
-    return filtros.modelo.some((modelo) => {
-      // Verificar si el modelo está presente en el objeto y es un array
-      console.log ('modelo', modelo)
-      if (modelo in dato && Array.isArray(dato[modelo])) {
-        // Verificar si la categoría está presente en cualquier posición del array
-        return dato[modelo].some((categoria) => filtros.categoria.includes(categoria));
-      }
-      return false;
-    });
-  });
-
-  datosFiltradosAnterior = tweetsFiltradosModeloAnterior.filter((dato) => {
-    // Verificar si alguna categoría coincide con los tweets
-    return filtros.modelo.some((modelo) => {
-      // Verificar si el modelo está presente en el objeto y es un array
-      if (modelo in dato && Array.isArray(dato[modelo])) {
-        // Verificar si la categoría está presente en cualquier posición del array
-        return dato[modelo].some((categoria) => filtros.categoria.includes(categoria));
-      }
-      return false;
-    });
-  });
-} else {
-  // No se especificaron categorías, mantener los tweets filtrados por modelo
-  datosFiltradosNuevo = tweetsFiltradosModelo;
-  datosFiltradosAnterior = tweetsFiltradosModeloAnterior;
-}
+  
+    // Verificar si se deben aplicar filtros adicionales por categorías
+    if (filtros.categoria && filtros.categoria.length > 0) {
+      // Filtrar por categorías
+      datosFiltradosNuevo = tweetsFiltradosModelo.filter((dato) => {
+        // Verificar si alguna categoría coincide con los tweets
+        return filtros.categoria.some((categoria) => {
+          // Verificar si la palabra está presente en el array dato[filtros.modelo]
+          return filtros.modelo.some((modelo) => dato[modelo].includes(categoria));
+        });
+      });
+  
+      datosFiltradosAnterior = tweetsFiltradosModeloAnterior.filter((dato) => {
+        // Verificar si alguna categoría coincide con los tweets
+        return filtros.categoria.some((categoria) => {
+          // Verificar si la palabra está presente en el array dato[filtros.modelo]
+          return filtros.modelo.some((modelo) => dato[modelo].includes(categoria));
+        });
+      });
+    } else {
+      // No se especificaron categorías, mantener los tweets filtrados por modelo
+      datosFiltradosNuevo = tweetsFiltradosModelo;
+      datosFiltradosAnterior = tweetsFiltradosModeloAnterior;
+    }
   }
-  
-  
-  
-  
+
 
   
 // Aplicar los filtros de serie si está presente

@@ -5,7 +5,7 @@ import { DataSet } from 'vis-data';
 import gif from './../../imagenes/Features-of-Big-data-analytics.gif'
 import { Progress } from 'antd';
 import './Graficos.css'
-import { Collapse, Tooltip, Button, Select, Divider,Flex,Radio } from 'antd';
+import { Collapse, Tooltip, Button, Select } from 'antd';
 import { Table } from 'antd';
 import video from './../../imagenes/ComunidadesRedes.mp4'
 import videoTablas from './../../imagenes/TablaInfluenciadores.mp4'
@@ -20,51 +20,15 @@ import imagen from './../../imagenes/grafo_comunidades-2023-06-19-2023-06-19.PNG
 //FIN FILTRO FECHAS
 import {IoOpenOutline} from 'react-icons/io5'
 import { Link } from 'react-router-dom';
-import {DownloadOutlined} from '@ant-design/icons';
-import JSZip from 'jszip/dist/jszip.min.js';
-
-
-
-
 
 const { Panel } = Collapse;
 const text = `
 Hashtags más utilizados en el conjunto de publicaciones o mensajes analizados. Representación gráfica del conjunto de usuarios y sus conexiones. Permite identificar las comunidades de usuarios más importantes y cómo se relacionan entre sí las diferentes comunidades. Cada color representa una comunidad.`;
 
-// const isValidDate = (dateString) => {
-//   const regex = /^\d{4}-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}$/;
-//   return regex.test(dateString);
-// };
+export default function GrafoComunidadesEnRedes(){
 
-export default function GrafoComunidadesEnRedes() {
-  const [opcionSeleccionada, setOpcionSeleccionada] = useState('');
+  
 
-  const handleFiltroFechaChange = (value) => {
-    setFiltroFecha(value);
-    setOpcionSeleccionada(value);
-  };
-
-  const descargarImagen = async () => {
-console.log(opcionSeleccionada)
-    const zipURL = `/grafos/Capturas-${opcionSeleccionada}.zip`;
-     console.log(zipURL)
-    try {
-      const response = await fetch(zipURL);
-      const blob = await response.blob();
-
-      // Crear un enlace y descargar el archivo ZIP
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `Capturas-${opcionSeleccionada}.zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error('Error al descargar el archivo ZIP:', error);
-    }
-  };
- 
- 
   const [displayGrafoComunidades, setdisplayGrafoComunidades] = useState('noflexne');
   const [display, setDisplay] = useState(true)
  //FILTRO FECHAS
@@ -89,21 +53,32 @@ useEffect(() => {
   actualizarDatosTablas();
 }, [filtroFecha]);
 
-const opciones = fechas
-.filter((fecha, index) => index > fechas.length - 4) // Filtra las últimas 3 fechas
-.map((fecha, index) => (
-  <Select.Option key={index} value={fecha}>
-    {fecha}
-  </Select.Option>
-));
 
 
+
+
+const opciones = fechas.slice(0, -1).map((fecha, index) => {
+   return (
+     <Select.Option key={index} value={fecha}>
+       {fecha}
+     </Select.Option>
+   );
+ });
+
+ const handleFiltroFechaChange = (valor) => {
+   setFiltroFecha(valor);
+   console.log(valor)
+ };
  // FIN FILTRO FECHAS
 
   function handleDisplay(){
     setDisplay(!display)
   }
   
+
+ 
+
+
   useEffect(() => {
     window.addEventListener('error', e => {
         if (e.message === 'ResizeObserver loop limit exceeded') {
@@ -122,6 +97,8 @@ const opciones = fechas
         }
     });
 }, []);
+
+
 
   const columns1 = [
     {
@@ -144,18 +121,22 @@ const opciones = fechas
       sorter: (a, b) => a.Centralidad - b.Centralidad,
       width: '200%',
     },
-    {
+ {
       title: 'Seguidores',
       dataIndex: 'Seguidores',
-      sorter: (a, b) => a.Seguidores - b.Seguidores,
-      width: '150%',
-    }
 
+      sorter: (a, b) => a.Seguidores - b.Seguidores,
+      width: '200%',
+    
+    },
    
   ];
+
   const onChange1 = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
   };
+
+
   const columns2 = [
     {
       title: 'Influencer',
@@ -204,9 +185,11 @@ const opciones = fechas
     },
    
   ];
+
   const onChange3 = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
   };
+
   const columns4 = [
     {
       title: 'Influencer',
@@ -229,56 +212,44 @@ const opciones = fechas
     },
    
   ];
+
   const onChange4 = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
   };
+
+
   const abrirEnOtraPestaña = () => {
     const url = `/dashboard/grafoComunidades`;
     window.open(url, '_blank');
   };
 
 
-
+  
   return (
     <div className="fondo-grafo">
     <div className="card-body">
-      
+
+
      {/*FILTRO FECHAS*/}
-     <div className='flex-container'>
-     {opciones.length > 1 ? (
-        <Select
-          className='fechas-grafos'
-          onChange={handleFiltroFechaChange}
-          value={filtroFecha}
-          placeholder='Seleccione una fecha'
-        >
-          {opciones}
-        </Select>
-      ) : (
-        <Select
-          className='fechas-grafos'
-          onChange={handleFiltroFechaChange}
-          value={filtroFecha}
-          placeholder='Seleccione una fecha'
-          onSelect={() => handleFiltroFechaChange(filtroFecha)}
-        >
-          <Select.Option value=''>
-            {filtroFecha}
-          </Select.Option>
-        </Select>
-      )}
-         <Flex gap="small" wrap="wrap">
-         <Tooltip title="Click para descargar el grafo">
-         <Button type="primary" shape="circle" icon={<DownloadOutlined />} className='download' onClick={descargarImagen} />
-           
-     
-         </Tooltip>
-         </Flex>
-         </div>              
+     <Select placeholder="Fechas" className='fechas-grafos' onChange={handleFiltroFechaChange} defaultValue={filtroFecha}>
+      {opciones}
+    </Select>
+
+
+
+  
+  
+ 
+    
+
+
+
+   
     <div>
+    
     <div className='carta video-texto2 scrollable-card'> 
     <Tooltip title="Click para ver el grafo">
-    <a href={`https://qsngrafos.vercel.app/comunidades/Milei1/grafo_comunidades-${filtroFecha}.html`} target="_blank">
+    <a href={`https://qsngrafos.vercel.app/comunidades/lanus/grafo_comunidades-${filtroFecha}.html`} target="_blank">
     <div className='video-explicativo cartaGrafo'>
       <img src={imagen} className='imagen-grafo' />
     </div>
@@ -298,7 +269,6 @@ Las conexiones cercanas a nodos importantes se acortan, como si fueran líneas m
 
     
     </div>
- 
           <div className='contenedorTablasGrafo' style={{display:displayGrafoComunidades}}>
           {/*VIDEO Y EXPLICACIÓN*/}
           <div className='video-texto2 carta scrollable-card'>
@@ -316,6 +286,9 @@ Las conexiones cercanas a nodos importantes se acortan, como si fueran líneas m
             
             </div>
             </div>
+
+
+
 
           <div className='Tablas'>{/*TABLAS*/}
           <div>
@@ -353,7 +326,14 @@ Las conexiones cercanas a nodos importantes se acortan, como si fueran líneas m
 
           </div> 
           </div>
+
+
+    
+   
+    
     </div>
+
+     
     </div>
     );
     }

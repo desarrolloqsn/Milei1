@@ -26,9 +26,9 @@ const FormLogin = () => {
    
       dispatch(loginSuccess(user));
       setRedirectToDashboard(true); // Establece el estado para redireccionar a "/dashboard"
-    } else if (username === 'qsnmilei' && password === 'qsnmilei2023') {
+    } else if (username === 'qsnlanus' && password === 'qsnlanus2023') {
       const user = {
-        username: 'qsnvzla',
+        username: 'qsnlanus',
         roles: ['user'],
       };
       dispatch(loginSuccess(user));
@@ -49,11 +49,11 @@ useEffect(() => {
   const storedUsername = localStorage.getItem('username');
   const storedPassword = localStorage.getItem('password');
 
-  if(storedUsername !== "analistas" ||storedUsername !== "qsnvzla" && storedPassword !== "qsn123" || storedPassword !== "qsnvzla2023"){
+  if(storedUsername !== "analistas" ||storedUsername !== "qsnlanus" && storedPassword !== "qsn123" || storedPassword !== "qsnlanus2023"){
     setError("Usuario o contraseña incorrecta")
   } else {
  // Si se encuentran almacenados, realizar el inicio de sesión automáticamente
- if (storedUsername === "analistas" ||storedPassword === "qsnvzla" && storedPassword === "qsn123" || storedPassword === "qsnvzla2023") {
+ if (storedUsername === "analistas" ||storedPassword === "qsnlanus" && storedPassword === "qsn123" || storedPassword === "qsnlanus2023") {
   const user = {
     username: storedUsername,
     roles: ['user'],

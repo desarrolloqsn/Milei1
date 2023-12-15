@@ -20,7 +20,6 @@ import NubePalabrasTrigrama from '../../componentes/Graficos/Trigrama'
 import { useSelector } from 'react-redux'
 import { TreemapModeloFiltro } from '../../componentes/Graficos/TreemapModeloFiltro'
 import BarrasApiladasModeloFiltro from '../../componentes/Graficos/BarrasApiladasModeloFiltro'
-import Mapa from '../../componentes/Graficos/Mapa'
 
 
 
@@ -40,12 +39,6 @@ export default function Graficos() {
         </div>
         <div className='grafico-pequeño'>
           <EventosAutores />
-        </div>
-      </div>
-
-      <div className='columna'>
-        <div className='grafico-unico'>
-          <Mapa/>
         </div>
       </div>
 
@@ -121,10 +114,10 @@ export default function Graficos() {
      
      <div className='columna'>
      <div className='grafico-treemap'>
-     
+       <TreemapModeloFiltro/>
      </div>
      <div className='grafico-barras'>
-   
+          <BarrasApiladasModeloFiltro />
         </div>
      </div>
     

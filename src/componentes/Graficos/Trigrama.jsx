@@ -18,7 +18,7 @@ export default function NubePalabrasTrigrama() {
   useEffect(() => {
     if (dataNube[filtroFecha]) {
       
-      setFiltroSerie(series[0]); // Establecer la primera serie como opción predeterminada
+      setFiltroSerie(filtroSerie); // Establecer la primera serie como opción predeterminada
     }
   }, [filtroFecha]);
 // console.log("trigrama",dataGrafico)
@@ -43,7 +43,7 @@ export default function NubePalabrasTrigrama() {
     colorField: 'palabra',
     color:['#8A2BE2','#A52A2A','#D2691E','#00008B','#556B2F','#00CED1','#B22222','#008000','#F08080','#FF00FF','#66CDAA','#FFA500',
     '#BC8F8F','#8B4513','#008080'],
-    
+   
     wordStyle: {
       fontFamily: 'Verdana',
       fontSize: [8, 32],

@@ -96,8 +96,8 @@ const config = {
       values: [...Array(24).keys()], // Valores personalizados para las horas (0-23)
     },
     value: {
-      min: 0,
-      max: 100,
+      min: minValue,
+      max: maxValue,
     },
   },
   xAxis: {

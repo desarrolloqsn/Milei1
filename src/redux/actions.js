@@ -9,8 +9,6 @@ import axios from "axios";
 //     datos: datos
 //   };
 // };
-const FROM_HOME = true; 
-const endPoint = 'http://190.2.16.169:3080';
 export function getClient() {
     return async function (dispatch) {
       try {
