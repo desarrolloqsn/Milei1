@@ -46,11 +46,11 @@ const TabsGrafos = () => {
           <GraphComunidades />
         </TabPane>
 
-{/* 
+
         <TabPane tab="Comunidades en redes" key="4" >
 
           <GrafoComunidadesEnRedes />
-        </TabPane> */}
+        </TabPane> 
 
 {/* 
         <TabPane tab="Comunidades en redes menos relevantes" key="5" >
@@ -59,11 +59,11 @@ const TabsGrafos = () => {
         </TabPane> 
       */}
 
-
+{/* 
     <TabPane tab="Modelos y categorías" key="6" >
 
             <GrafosModelos />
-          </TabPane>
+          </TabPane> */}
 
 
 
