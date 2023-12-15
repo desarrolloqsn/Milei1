@@ -28,7 +28,7 @@ export default function BarrasApiladasModeloFiltro() {
       tweetsByDay[date].push(tweet);
     });
   
-    // console.log("1 paso",tweetsByDay);
+    console.log("1 paso",tweetsByDay);
     const categoryCountsByDay = {};
   
     Object.entries(tweetsByDay).forEach(([date, tweets]) => {
@@ -58,8 +58,8 @@ export default function BarrasApiladasModeloFiltro() {
       categoryCountsByDay[date] = categoryCounts;
     });
   
-    // console.log(filtroModelo, filtroCategoria);
-    // console.log("2 paso", categoryCountsByDay);
+    console.log(filtroModelo, filtroCategoria);
+    console.log("2 paso", categoryCountsByDay);
   
     const formattedData = [];
 
@@ -82,7 +82,7 @@ export default function BarrasApiladasModeloFiltro() {
         });
       });
   
-    // console.log("3 paso", formattedData);
+    console.log("3 paso", formattedData);
     return formattedData;
   }
     

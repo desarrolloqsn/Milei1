@@ -243,7 +243,7 @@ const TablaSeries = () => {
           onChange: cancel,
         }}
         scroll={{
-          x: 500,
+          x: 1000,
         
         }}
       />

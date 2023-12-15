@@ -11,18 +11,27 @@ import { Button, Tooltip } from 'antd';
 export default function GraficoArreglado() {
   const [dataTweets, setData] = useState([]);
   const datos = useSelector(state => state.datosFiltrados);
+  const filtroModelo = useSelector (state => state.filtros)
+
+
+
 
   useEffect(() => {
-    const formattedData = organizeTweetsByDayAndAttributes(datos);
-    setData(formattedData);
-  }, [datos]);
 
-  function organizeTweetsByDayAndAttributes(data) {
+    const formattedData = organizeTweetsByDayAndAttributes(datos, filtroModelo);
+    setData(formattedData);
+  }, [datos, filtroModelo ]);
+
+
+  
+  function organizeTweetsByDayAndAttributes(data, filtroModelo) {
+    if (!data || data.lenght === 0){
+
+      return []; 
+    }
     // Objeto para almacenar los tweets por día
     const tweetsByDay = {};
-
-    // Recorrer los tweets y agruparlos por día
-    data.forEach(tweet => {
+    data.forEach((tweet) => {
       const date = tweet.date;
       if (!tweetsByDay[date]) {
         tweetsByDay[date] = [];
@@ -30,34 +39,38 @@ export default function GraficoArreglado() {
       tweetsByDay[date].push(tweet);
     });
 
-    // Objeto para almacenar los atributos y sus valores
-    const attributes = [
-      'Atributos de Personalidad',
-      'Atributos de Politicos',
+    const attributeCountsByDay = {};
+    let attributes = [
+      'Atributos',
+      'Clima Social',
       'Continuidad y cambio',
       'Emociones Básicas (Plutchik)',
       'Preocupaciones',
-      'Preocupaciones - Ven',
       'Red motivacional del voto',
       'Sentimientos',
-      'Voto Emocional y Racional'
+      'Voto Emocional y Racional',
+
     ];
+    //  console.log('filtroModelo' ,filtroModelo.modelo)
+    if ( filtroModelo && filtroModelo.modelo && filtroModelo.modelo.length > 0) {
+      attributes = [  
+      
+        filtroModelo.modelo 
+      ];
+    }else {
+      attributes = [
+      ...attributes
+      ];
+    }
 
-    // Objeto para almacenar los contadores de atributos por día
-    const attributeCountsByDay = {};
-
-    // Recorrer los tweets por día y contar los atributos
     Object.entries(tweetsByDay).forEach(([date, tweets]) => {
       const attributeCounts = {};
-
-      // Inicializar los contadores para cada atributo
-      attributes.forEach(attribute => {
+      attributes.forEach((attribute) => {
         attributeCounts[attribute] = 0;
       });
 
-      // Contar los atributos por tweet
-      tweets.forEach(tweet => {
-        attributes.forEach(attribute => {
+      tweets.forEach((tweet) => {
+        attributes.forEach((attribute) => {
           const attributeArray = tweet[attribute];
           if (attributeArray && attributeArray.length > 0) {
             attributeCounts[attribute] += attributeArray.length;
@@ -73,13 +86,13 @@ export default function GraficoArreglado() {
     Object.entries(attributeCountsByDay)
       .sort((a, b) => new Date(a[0]) - new Date(b[0])) // Ordenar por fecha
       .forEach(([date, attributeCounts]) => {
-        const formattedAttributes = Object.entries(attributeCounts).map(([attribute, value]) => {
+        const formattedAttributes = Object.entries(attributeCounts).map(([filtroModelo, value]) => {
           return {
             dia: date,
-            modelo: attribute,
+            modelo: filtroModelo,
             valor: value
           };
-        });
+        }).filter(item => item !== null)
         formattedData.push(...formattedAttributes);
       });
 

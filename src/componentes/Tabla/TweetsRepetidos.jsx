@@ -147,7 +147,7 @@ export default function TablaTweetsRepetidos(){
   
   const top10MasRetwitteados = primeros100TweetsMasRepetidos.slice(0, 10);
 
-// console.log(top10MasRetwitteados)
+
 const data = [
   {
     key: '1',
